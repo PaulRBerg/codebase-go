@@ -9,8 +9,8 @@ import (
 )
 
 type Bird struct {
-	Species string		`json:"species"`
-	Description string	`json:"description"`
+	Species     string `json:"species"`
+	Description string `json:"description"`
 }
 
 func mainjson() {
@@ -27,9 +27,9 @@ func mainjson() {
 }
 
 type DomainSeparator struct {
-	Name 		string 			`json:"name"`
-	Version		string 			`json:"version"`
-	ChainId		*big.Int		`json:"chainId"`
-	Address		common.Address	`json:"address"`
-	Salt		hexutil.Bytes	`json:"salt"`
+	Name    string         `json:"name"`
+	Version string         `json:"version"`
+	ChainId *big.Int       `json:"chainId"`
+	Address common.Address `json:"address"`
+	Salt    hexutil.Bytes  `json:"salt"`
 }
