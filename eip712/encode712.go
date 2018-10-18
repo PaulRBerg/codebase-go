@@ -47,6 +47,7 @@ func MainEncode712() {
 	fmt.Printf("hash: %s\n", hash.String())
 }
 
+// hashStruct generates the following encoding for the given domain and message:
 // `encode(domainSeparator : 𝔹²⁵⁶, message : 𝕊) = "\x19\x01" ‖ domainSeparator ‖ hashStruct(message)`
 func hashStruct(types map[string]EIP712Type, key string, data EIP712Data, depth int) common.Hash {
 	helpers.PrintJson("hashStruct", map[string]interface{}{

@@ -9,7 +9,7 @@ import (
 	"unicode"
 )
 
-// encodeType transforms the given types into an encoding of the form
+// encodeType generates the followign encoding:
 // `name ‖ "(" ‖ member₁ ‖ "," ‖ member₂ ‖ "," ‖ … ‖ memberₙ ")"`
 //
 // each member is written as `type ‖ " " ‖ name` encodings cascade down and are sorted by name

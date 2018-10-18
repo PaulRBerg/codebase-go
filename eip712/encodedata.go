@@ -13,8 +13,6 @@ import (
 	"time"
 )
 
-//type EIP712Message map[string]interface{}
-
 var dataBool = map[string]interface{}{
 	"magic": true,
 }
@@ -31,6 +29,7 @@ var dataStandard = map[string]interface{}{
 	"contents": "Hello, Bob!",
 }
 
+// encodeData generates the following encoding:
 // `enc(value₁) ‖ enc(value₂) ‖ … ‖ enc(valueₙ)`
 //
 // each encoded member is 32-byte long
