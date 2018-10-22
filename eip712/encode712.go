@@ -72,25 +72,25 @@ func MainEncode712() {
 	if mailTypeHash != "0xa0cedeb2dc280ba39b857546d74f5549c3a1d7bdc2dd96bf881f76108e23dac2" {
 		panic(fmt.Errorf("mailTypeHash %s is wrong", mailTypeHash))
 	}
-	fmt.Printf("mailTypeHash: 0x%s\n", mailTypeHash)
+	fmt.Printf("mailTypeHash: %s\n", mailTypeHash)
 
 	// encodeData
 	dataEncoding := fmt.Sprintf("0x%s", common.Bytes2Hex(typedData.encodeData(typedData.PrimaryType, typedData.Message)))
 	if dataEncoding != "0xa0cedeb2dc280ba39b857546d74f5549c3a1d7bdc2dd96bf881f76108e23dac2fc71e5fa27ff56c350aa531bc129ebdf613b772b6604664f5d8dbe21b85eb0c8cd54f074a4af31b4411ff6a60c9719dbd559c221c8ac3492d9d872b041d703d1b5aadf3154a261abdd9086fc627b61efca26ae5702701d05cd2305f7c52a2fc8" {
 		panic(fmt.Errorf("dataEncoding %s is wrong", dataEncoding))
 	}
-	fmt.Printf("dataEncoding: 0x%s\n", dataEncoding)
+	fmt.Printf("dataEncoding: %s\n", dataEncoding)
 
 	// hashStruct
 	mainHash := fmt.Sprintf("0x%s", common.Bytes2Hex(hashStruct(typedData.PrimaryType, typedData.Message)))
 	if mainHash != "0xc52c0ee5d84264471806290a3f2c4cecfc5490626bf912d01f240d7a274b371e" {
 		panic(fmt.Errorf("mainHash %s is wrong", dataEncoding))
 	}
-	fmt.Printf("mainHash: 0x%s\n", mainHash)
+	fmt.Printf("mainHash: %s\n", mainHash)
 
 	// signature
 	signature := common.Bytes2Hex(signHash())
-	fmt.Printf("signature: 0x%s\n", signature)
+	fmt.Printf("signature: %s\n", signature)
 }
 
 func signHash() []byte {
