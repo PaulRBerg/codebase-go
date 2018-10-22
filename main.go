@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	eip712.MainEncode712V2()
+	eip712.MainEncode712()
 }
 
 func ForLoops() {

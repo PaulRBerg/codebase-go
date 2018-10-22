@@ -8,26 +8,6 @@ import (
 
 const primaryType = "Mail"
 
-var typesSingle = EIP712Types{
-	"EIP712Domain": {
-		{
-			"name": "name",
-			"type": "string",
-		},
-		{
-			"name": "version",
-			"type": "string",
-		},
-		{
-			"name": "chainId",
-			"type": "uint256",
-		},
-		{
-			"name": "verifyingContract",
-			"type": "address",
-		},
-	},
-}
 var typesMultiple = EIP712Types{
 	"House": {
 		{
@@ -122,22 +102,6 @@ var typesStandard = EIP712Types{
 		},
 	},
 }
-var typesCyclical = EIP712Types{
-	"Mail": {
-		{
-			"name": "from",
-			"type": "Mail",
-		},
-		{
-			"name": "to",
-			"type": "Mail",
-		},
-		{
-			"name": "contents",
-			"type": "string",
-		},
-	},
-}
 
 var domainStandard = EIP712Domain{
 	"Ether Mail",
@@ -153,11 +117,11 @@ var dataBool = map[string]interface{}{
 var dataStandard = map[string]interface{}{
 	"from": map[string]interface{}{
 		"name":   "Cow",
-		"wallet": "0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826",
+		"wallet": common.HexToAddress("0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826"),
 	},
 	"to": map[string]interface{}{
 		"name":   "Bob",
-		"wallet": "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB",
+		"wallet": common.HexToAddress("0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB"),
 	},
 	"contents": "Hello, Bob!",
 }
