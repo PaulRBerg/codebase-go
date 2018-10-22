@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
+	"math/big"
+
 	"github.com/PaulRBerg/go-ethereum/accounts/abi"
 	"github.com/holiman/go-ethereum/common"
-	"math/big"
 )
 
 func maintypes() {

@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/PaulRBerg/basics/eip712"
 )
 
 func main() {
-	eip712.MainEncode712()
+	eip712.MainEncode712V2()
 }
 
 func ForLoops() {

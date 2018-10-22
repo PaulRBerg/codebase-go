@@ -1,8 +1,8 @@
 package helpers
 
 import (
-"encoding/json"
-"fmt"
+	"encoding/json"
+	"fmt"
 )
 
 func PrintJson(label string, output map[string]interface{}) {
@@ -14,4 +14,3 @@ func PrintJson(label string, output map[string]interface{}) {
 	fmt.Print(string(jsonVal))
 	fmt.Print("\n\n")
 }
-

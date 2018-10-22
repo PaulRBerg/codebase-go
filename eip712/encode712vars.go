@@ -1,8 +1,14 @@
 package eip712
 
+import (
+	"math/big"
+
+	"github.com/PaulRBerg/go-ethereum/common"
+)
+
 const primaryType = "Mail"
 
-var typesSingle = map[string]EIP712Type{
+var typesSingle = EIP712Types{
 	"EIP712Domain": {
 		{
 			"name": "name",
@@ -22,7 +28,7 @@ var typesSingle = map[string]EIP712Type{
 		},
 	},
 }
-var typesMultiple = map[string]EIP712Type{
+var typesMultiple = EIP712Types{
 	"House": {
 		{
 			"name": "name",
@@ -72,7 +78,25 @@ var typesMultiple = map[string]EIP712Type{
 		},
 	},
 }
-var typesStandard = map[string]EIP712Type{
+var typesStandard = EIP712Types{
+	"EIP712Domain": {
+		{
+			"name": "name",
+			"type": "string",
+		},
+		{
+			"name": "version",
+			"type": "string",
+		},
+		{
+			"name": "chainId",
+			"type": "uint256",
+		},
+		{
+			"name": "verifyingContract",
+			"type": "address",
+		},
+	},
 	"Person": {
 		{
 			"name": "name",
@@ -98,7 +122,7 @@ var typesStandard = map[string]EIP712Type{
 		},
 	},
 }
-var typesCyclical = map[string]EIP712Type{
+var typesCyclical = EIP712Types{
 	"Mail": {
 		{
 			"name": "from",
@@ -113,4 +137,27 @@ var typesCyclical = map[string]EIP712Type{
 			"type": "string",
 		},
 	},
+}
+
+var domainStandard = EIP712Domain{
+	"Ether Mail",
+	"1",
+	big.NewInt(1),
+	common.HexToAddress("0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC"),
+	nil,
+}
+
+var dataBool = map[string]interface{}{
+	"magic": true,
+}
+var dataStandard = map[string]interface{}{
+	"from": map[string]interface{}{
+		"name":   "Cow",
+		"wallet": "0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826",
+	},
+	"to": map[string]interface{}{
+		"name":   "Bob",
+		"wallet": "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB",
+	},
+	"contents": "Hello, Bob!",
 }

@@ -2,25 +2,24 @@ package eip712
 
 import (
 	"bytes"
-	"fmt"
-	"github.com/PaulRBerg/basics/helpers"
 	"sort"
-	"strings"
 	"unicode"
+
+	"github.com/PaulRBerg/basics/helpers"
 )
 
 // encodeType generates the followign encoding:
 // `name ‖ "(" ‖ member₁ ‖ "," ‖ member₂ ‖ "," ‖ … ‖ memberₙ ")"`
 //
 // each member is written as `type ‖ " " ‖ name` encodings cascade down and are sorted by name
-func encodeType(types map[string]EIP712Type) string {
-	helpers.PrintJson("hashStruct", map[string]interface{}{
-		"types": types,
+func encodeType(_types EIP712Types) []byte {
+	helpers.PrintJson("encodeType", map[string]interface{}{
+		"types": _types,
 	})
 	//fmt.Printf("encodeType: types %v\n\n", types)
 
 	var priorities = make(map[string]uint)
-	for key := range types {
+	for key := range _types {
 		priorities[key] = 0
 	}
 
@@ -29,7 +28,7 @@ func encodeType(types map[string]EIP712Type) string {
 		priorities[typeVal]++
 
 		// Importantly, we also have to check for parent types to increment them too
-		for _, typeObj := range types[typeVal] {
+		for _, typeObj := range _types[typeVal] {
 			_typeVal := typeObj["type"]
 
 			firstChar := []rune(_typeVal)[0]
@@ -49,34 +48,36 @@ func encodeType(types map[string]EIP712Type) string {
 		return false
 	}
 
-	for typeKey, typeArr := range types {
+	for typeKey, typeArr := range _types {
 		var typeValArr []string
 
 		for _, typeObj := range typeArr {
 			typeVal := typeObj["type"]
-			if typeKey == typeVal {
-				panic(fmt.Errorf("type %s cannot reference itself", typeVal))
-			}
+			//if typeKey == typeVal {
+			//	panic(fmt.Errorf("type %s cannot reference itself", typeVal))
+			//}
 
 			firstChar := []rune(typeVal)[0]
 			if unicode.IsUpper(firstChar) {
-				if types[typeVal] != nil {
+				if _types[typeVal] != nil {
 					if !visited(typeValArr, typeVal) {
 						typeValArr = append(typeValArr, typeVal)
 						update(typeKey, typeVal)
 					}
-				} else {
-					panic(fmt.Errorf("referenced type %s is undefined", typeVal))
-				}
-			} else {
-				if !isStandardType(typeVal) {
-					if types[typeVal] != nil {
-						panic(fmt.Errorf("Custom type %s must be capitalized", typeVal))
-					} else {
-						panic(fmt.Errorf("Unknown type %s", typeVal))
-					}
 				}
 			}
+			//	} else {
+			//		panic(fmt.Errorf("referenced type %s is undefined", typeVal))
+			//	}
+			//} else {
+			//	if !isStandardType(typeVal) {
+			//		if types[typeVal] != nil {
+			//			panic(fmt.Errorf("Custom type %s must be capitalized", typeVal))
+			//		} else {
+			//			panic(fmt.Errorf("Unknown type %s", typeVal))
+			//		}
+			//	}
+			//}
 		}
 
 		typeValArr = []string{}
@@ -86,7 +87,7 @@ func encodeType(types map[string]EIP712Type) string {
 	var buffer bytes.Buffer
 	for _, priority := range sortedPriorities {
 		typeKey := priority.Type
-		typeArr := types[typeKey]
+		typeArr := _types[typeKey]
 
 		buffer.WriteString(typeKey)
 		buffer.WriteString("(")
@@ -102,7 +103,7 @@ func encodeType(types map[string]EIP712Type) string {
 		buffer.WriteString(")")
 	}
 
-	return buffer.String()
+	return buffer.Bytes()
 }
 
 // Helper function to sort types by priority and name. Priority is calculated b
@@ -127,25 +128,4 @@ func sortByPriorityAndName(input map[string]uint) []EIP712TypePriority {
 	//fmt.Printf("\n")
 
 	return priorities
-}
-
-// Checks if the given type is a standard type accepted by EIP-712
-func isStandardType(typeStr string) bool {
-	standardTypes := []string{
-		"array",
-		"address",
-		"boolean",
-		"bytes",
-		"string",
-		"struct",
-		"uint",
-	}
-
-	for _, val := range standardTypes {
-		if strings.HasPrefix(typeStr, val) {
-			return true
-		}
-	}
-
-	return false
 }

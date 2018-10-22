@@ -3,9 +3,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"math/big"
+
 	"github.com/PaulRBerg/go-ethereum/common"
 	"github.com/PaulRBerg/go-ethereum/common/hexutil"
-	"math/big"
 )
 
 type Bird struct {
