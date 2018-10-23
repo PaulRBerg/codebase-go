@@ -2,13 +2,13 @@ package eip712
 
 import (
 	"bytes"
-	"github.com/PaulRBerg/go-ethereum/accounts/abi"
-	"github.com/PaulRBerg/go-ethereum/common"
 	"math/big"
 	"reflect"
 	"strconv"
 	"strings"
 
+	"github.com/PaulRBerg/go-ethereum/accounts/abi"
+	"github.com/PaulRBerg/go-ethereum/common"
 	"github.com/PaulRBerg/go-ethereum/crypto"
 )
 
@@ -64,7 +64,7 @@ func (typedData *TypedData) encodeData(primaryType string, data map[string]inter
 				sizeStr := strings.TrimPrefix(encType, "bytes")
 				size, _ := strconv.Atoi(sizeStr)
 				bytesValue := []byte{}
-				for i := 0; i < 32 - size; i++ {
+				for i := 0; i < 32-size; i++ {
 					bytesValue = append(bytesValue, 0)
 				}
 				for _, _byte := range encValue.([]byte) {
@@ -100,10 +100,10 @@ func (typedData *TypedData) encodeData(primaryType string, data map[string]inter
 			}
 			encValues = append(encValues, crypto.Keccak256(arrayBuffer.Bytes()))
 		} else if typedData.Types[field["type"]] != nil {
-				encTypes = append(encTypes, "bytes32")
-				mapValue := encValue.(map[string]interface{})
-				encValue = crypto.Keccak256(typedData.encodeData(field["type"], mapValue))
-				encValues = append(encValues, encValue)
+			encTypes = append(encTypes, "bytes32")
+			mapValue := encValue.(map[string]interface{})
+			encValue = crypto.Keccak256(typedData.encodeData(field["type"], mapValue))
+			encValues = append(encValues, encValue)
 		} else {
 			encType, encValue := handlePrimitiveValue(encType, encValue, primaryType, data)
 			encTypes = append(encTypes, encType)

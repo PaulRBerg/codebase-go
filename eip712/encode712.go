@@ -3,10 +3,11 @@ package eip712
 import (
 	"bytes"
 	"fmt"
+	"math/big"
+
 	"github.com/PaulRBerg/go-ethereum/common"
 	"github.com/PaulRBerg/go-ethereum/common/hexutil"
 	"github.com/PaulRBerg/go-ethereum/crypto"
-	"math/big"
 )
 
 type TypedData struct {
