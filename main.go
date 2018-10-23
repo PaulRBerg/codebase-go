@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/PaulRBerg/basics/eip712"
+	"github.com/PaulRBerg/codebase/eip712"
 )
 
 func main() {

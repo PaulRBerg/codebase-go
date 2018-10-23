@@ -3,12 +3,12 @@ package eip712
 import (
 	"bytes"
 	"github.com/PaulRBerg/go-ethereum/accounts/abi"
+	"github.com/PaulRBerg/go-ethereum/common"
 	"math/big"
 	"reflect"
 	"strconv"
 	"strings"
 
-	"github.com/PaulRBerg/go-ethereum/common"
 	"github.com/PaulRBerg/go-ethereum/crypto"
 )
 
@@ -29,82 +29,83 @@ func (typedData *TypedData) encodeData(primaryType string, data map[string]inter
 	encValues = append(encValues, typedData.typeHash(primaryType))
 
 	// Handle primitive values
-	handlePrimitiveValue := func(_type string, value interface{}, primaryType string, data interface{}) (string, interface{}) {
-		var encType string
-		var encValue interface{}
+	handlePrimitiveValue := func(encType string, encValue interface{}, primaryType string, data interface{}) (string, interface{}) {
+		var primitiveEncType string
+		var primitiveEncValue interface{}
 
-		if _type == "address" {
-			encType = "address"
+		switch encType {
+		case "address":
+			primitiveEncType = "address"
 			bytesValue := []byte{}
 			for i := 0; i < 12; i++ {
 				bytesValue = append(bytesValue, 0)
 			}
-			for _, _byte := range value.(common.Address).Bytes() {
+			for _, _byte := range encValue.(common.Address).Bytes() {
 				bytesValue = append(bytesValue, _byte)
 			}
-			encValue = bytesValue
-		} else if _type == "bytes" {
-			encType = "bytes32"
-			value := crypto.Keccak256(value.([]byte))
-			encValue = value
-		} else if _type == "string" {
-			encType = "bytes32"
-			value := crypto.Keccak256([]byte(value.(string)))
-			encValue = value
-		} else if _type == "bool" {
-			encType = "uint256"
+			primitiveEncValue = bytesValue
+			break
+		case "bool":
+			primitiveEncType = "uint256"
 			var int64Val int64
-			if value.(bool) {
+			if encValue.(bool) {
 				int64Val = 1
 			}
-			encValue = abi.U256(big.NewInt(int64Val))
-		} else if strings.HasPrefix(_type, "bytes") {
-			encTypes = append(encTypes, "bytes32")
-			sizeStr := strings.TrimPrefix(_type, "bytes")
-			size, _ := strconv.Atoi(sizeStr)
-			bytesValue := []byte{}
-			for i := 0; i < 32 - size; i++ {
-				bytesValue = append(bytesValue, 0)
+			primitiveEncValue = abi.U256(big.NewInt(int64Val))
+			break
+		case "bytes", "string":
+			primitiveEncType = "bytes32"
+			value := crypto.Keccak256(bytesValueOf(encValue))
+			primitiveEncValue = value
+			break
+		default:
+			if strings.HasPrefix(encType, "bytes") {
+				encTypes = append(encTypes, "bytes32")
+				sizeStr := strings.TrimPrefix(encType, "bytes")
+				size, _ := strconv.Atoi(sizeStr)
+				bytesValue := []byte{}
+				for i := 0; i < 32 - size; i++ {
+					bytesValue = append(bytesValue, 0)
+				}
+				for _, _byte := range encValue.([]byte) {
+					bytesValue = append(bytesValue, _byte)
+				}
+				encValues = append(encValues, bytesValue)
+			} else if strings.HasPrefix(encType, "uint") || strings.HasPrefix(encType, "int") {
+				encTypes = append(encTypes, "uint256")
+				encValues = append(encValues, abi.U256(encValue.(*big.Int)))
 			}
-			for _, _byte := range value.([]byte) {
-				bytesValue = append(bytesValue, _byte)
-			}
-			encValues = append(encValues, bytesValue)
-		} else if strings.HasPrefix(_type, "uint") || strings.HasPrefix(_type, "int") {
-			encTypes = append(encTypes, "uint256")
-			encValues = append(encValues, abi.U256(value.(*big.Int)))
+			break
 		}
-
-		return encType, encValue
+		return primitiveEncType, primitiveEncValue
 	}
 
-	// Add field contents
+	// Add field contents. Structs and arrays have special handlings.
 	for _, field := range typedData.Types[primaryType] {
-		_type := field["type"]
-		value := data[field["name"]]
+		encType := field["type"]
+		encValue := data[field["name"]]
 
-		// Structs and arrays have special handlings
-		if typedData.Types[field["type"]] != nil {
+		if encType[len(encType)-1:] == "]" {
 			encTypes = append(encTypes, "bytes32")
-			mapValue := value.(map[string]interface{})
-			value = crypto.Keccak256(typedData.encodeData(field["type"], mapValue))
-			encValues = append(encValues, value)
-		} else if _type[len(_type)-1:] == "]" {
-			encTypes = append(encTypes, "bytes32")
-			parsedType := strings.Split(_type, "[")[0]
+			parsedType := strings.Split(encType, "[")[0]
 			arrayBuffer := bytes.Buffer{}
-			for _, item := range value.([]interface{}) {
+			for _, item := range encValue.([]interface{}) {
 				if typedData.Types[parsedType] != nil {
 					encoding := typedData.encodeData(parsedType, item.(map[string]interface{}))
 					arrayBuffer.Write(encoding)
 				} else {
-					_, encValue := handlePrimitiveValue(_type, value, parsedType, item)
+					_, encValue := handlePrimitiveValue(encType, encValue, parsedType, item)
 					arrayBuffer.Write(bytesValueOf(encValue))
 				}
 			}
 			encValues = append(encValues, crypto.Keccak256(arrayBuffer.Bytes()))
+		} else if typedData.Types[field["type"]] != nil {
+				encTypes = append(encTypes, "bytes32")
+				mapValue := encValue.(map[string]interface{})
+				encValue = crypto.Keccak256(typedData.encodeData(field["type"], mapValue))
+				encValues = append(encValues, encValue)
 		} else {
-			encType, encValue := handlePrimitiveValue(_type, value, primaryType, data)
+			encType, encValue := handlePrimitiveValue(encType, encValue, primaryType, data)
 			encTypes = append(encTypes, encType)
 			encValues = append(encValues, encValue)
 		}
