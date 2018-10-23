@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-
 	"github.com/PaulRBerg/codebase-go/eip712"
 )
 

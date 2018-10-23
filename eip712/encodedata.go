@@ -2,6 +2,7 @@ package eip712
 
 import (
 	"bytes"
+	"fmt"
 	"math/big"
 	"reflect"
 	"strconv"
@@ -29,7 +30,7 @@ func (typedData *TypedData) encodeData(primaryType string, data map[string]inter
 	encValues = append(encValues, typedData.typeHash(primaryType))
 
 	// Handle primitive values
-	handlePrimitiveValue := func(encType string, encValue interface{}, primaryType string, data interface{}) (string, interface{}) {
+	handlePrimitiveValue := func(encType string, encValue interface{}) (string, interface{}) {
 		var primitiveEncType string
 		var primitiveEncValue interface{}
 
@@ -55,8 +56,7 @@ func (typedData *TypedData) encodeData(primaryType string, data map[string]inter
 			break
 		case "bytes", "string":
 			primitiveEncType = "bytes32"
-			value := crypto.Keccak256(bytesValueOf(encValue))
-			primitiveEncValue = value
+			primitiveEncValue = crypto.Keccak256(bytesValueOf(encValue))
 			break
 		default:
 			if strings.HasPrefix(encType, "bytes") {
@@ -70,10 +70,10 @@ func (typedData *TypedData) encodeData(primaryType string, data map[string]inter
 				for _, _byte := range encValue.([]byte) {
 					bytesValue = append(bytesValue, _byte)
 				}
-				encValues = append(encValues, bytesValue)
+				primitiveEncValue = bytesValue
 			} else if strings.HasPrefix(encType, "uint") || strings.HasPrefix(encType, "int") {
-				encTypes = append(encTypes, "uint256")
-				encValues = append(encValues, abi.U256(encValue.(*big.Int)))
+				primitiveEncType = "uint256"
+				primitiveEncValue = abi.U256(encValue.(*big.Int))
 			}
 			break
 		}
@@ -84,7 +84,6 @@ func (typedData *TypedData) encodeData(primaryType string, data map[string]inter
 	for _, field := range typedData.Types[primaryType] {
 		encType := field["type"]
 		encValue := data[field["name"]]
-
 		if encType[len(encType)-1:] == "]" {
 			encTypes = append(encTypes, "bytes32")
 			parsedType := strings.Split(encType, "[")[0]
@@ -94,7 +93,7 @@ func (typedData *TypedData) encodeData(primaryType string, data map[string]inter
 					encoding := typedData.encodeData(parsedType, item.(map[string]interface{}))
 					arrayBuffer.Write(encoding)
 				} else {
-					_, encValue := handlePrimitiveValue(encType, encValue, parsedType, item)
+					_, encValue := handlePrimitiveValue(encType, encValue)
 					arrayBuffer.Write(bytesValueOf(encValue))
 				}
 			}
@@ -105,9 +104,9 @@ func (typedData *TypedData) encodeData(primaryType string, data map[string]inter
 			encValue = crypto.Keccak256(typedData.encodeData(field["type"], mapValue))
 			encValues = append(encValues, encValue)
 		} else {
-			encType, encValue := handlePrimitiveValue(encType, encValue, primaryType, data)
-			encTypes = append(encTypes, encType)
-			encValues = append(encValues, encValue)
+			primitiveEncType, primitiveEncValue := handlePrimitiveValue(encType, encValue)
+			encTypes = append(encTypes, primitiveEncType)
+			encValues = append(encValues, primitiveEncValue)
 		}
 	}
 
@@ -125,13 +124,14 @@ func bytesValueOf(_interface interface{}) []byte {
 		return bytesVal
 	}
 
-	switch reflect.ValueOf(_interface) {
-	case reflect.ValueOf(string("")):
+	switch reflect.TypeOf(_interface) {
+	case reflect.TypeOf(string("")):
 		return []byte(_interface.(string))
 		break
 	default:
 		break
 	}
 
+	panic(fmt.Errorf("unrecognizer interface %v", _interface))
 	return []byte{}
 }

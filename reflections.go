@@ -7,7 +7,8 @@ import (
 
 func mainreflections() {
 	//Types()
-	Interfacing()
+	//TypesV2()
+	//Interfacing()
 	//Setting()
 	//Structing()
 }
@@ -24,6 +25,11 @@ func Types() {
 	fmt.Println("kind of x.v is", v.Kind())
 	fmt.Println("uint of x.v is", v.Uint())
 	fmt.Println("type of uint of x.v. is", reflect.TypeOf(v.Uint()))
+}
+
+func TypesV2() {
+	str := "Cow"
+	fmt.Println(reflect.TypeOf(str) == reflect.TypeOf(string("")))
 }
 
 // Interface returns v's value as an interface{}.
