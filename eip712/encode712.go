@@ -3,11 +3,10 @@ package eip712
 import (
 	"bytes"
 	"fmt"
-	"math/big"
-
 	"github.com/PaulRBerg/go-ethereum/common"
 	"github.com/PaulRBerg/go-ethereum/common/hexutil"
 	"github.com/PaulRBerg/go-ethereum/crypto"
+	"math/big"
 )
 
 type TypedData struct {
@@ -34,16 +33,6 @@ type EIP712Domain struct {
 	VerifyingContract common.Address `json:"verifyingContract"`
 	Salt              hexutil.Bytes  `json:"salt"`
 }
-
-const (
-	TypeArray   = "array"
-	TypeAddress = "address"
-	TypeBool    = "bool"
-	TypeBytes   = "bytes"
-	TypeInt     = "int"
-	TypeMap     = "map"
-	TypeString  = "string"
-)
 
 var typedData = TypedData{
 	typesStandard,
@@ -84,13 +73,23 @@ func MainEncode712() {
 	// hashStruct
 	mainHash := fmt.Sprintf("0x%s", common.Bytes2Hex(hashStruct(typedData.PrimaryType, typedData.Message)))
 	if mainHash != "0xc52c0ee5d84264471806290a3f2c4cecfc5490626bf912d01f240d7a274b371e" {
-		panic(fmt.Errorf("mainHash %s is wrong", dataEncoding))
+		panic(fmt.Errorf("mainHash %s is wrong", mainHash))
 	}
 	fmt.Printf("mainHash: %s\n", mainHash)
 
+	// hashStruct
+	domainHash := fmt.Sprintf("0x%s", common.Bytes2Hex(hashStruct("EIP712Domain", typedData.Domain.Map())))
+	if domainHash != "0xf2cee375fa42b42143804025fc449deafd50cc031ca257e0b194a650a912090f" {
+		panic(fmt.Errorf("domainHash %s is wrong", domainHash))
+	}
+	fmt.Printf("domainHash: %s\n", domainHash)
+
 	// signature
-	signature := common.Bytes2Hex(signHash())
-	fmt.Printf("signature: %s\n", signature)
+	sig := fmt.Sprintf("0x%s", common.Bytes2Hex(signHash()))
+	if sig != "0xbe609aee343fb3c4b28e1df9e632fca64fcfaede20f02e86244efddf30957bd2" {
+		panic(fmt.Errorf("signature %s is wrong", sig))
+	}
+	fmt.Printf("signature: %s\n", sig)
 }
 
 func signHash() []byte {
