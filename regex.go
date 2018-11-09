@@ -20,7 +20,7 @@ func mainregex() {
 	fmt.Println()
 
 	fmt.Println("SomeType[50]")
-	rarrays, _ := regexp.Compile("(\\w+)([\\d+])")
+	rarrays, _ := regexp.Compile(`(\\w+)([\\d+])`)
 	fmt.Println(rarrays.MatchString("SomeType[50]"))
 	fmt.Println(rnumbers.FindString("SomeType[50]"))
 	fmt.Println()

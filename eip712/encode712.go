@@ -46,54 +46,54 @@ func MainEncode712() {
 	// encodeType
 	mailTypeEncoding := string(typedData.encodeType(typedData.PrimaryType))
 	if mailTypeEncoding != "Mail(Person from,Person to,string contents)Person(string name,address wallet)" {
-		panic(fmt.Errorf("mailTypeEncoding %s is wrong", mailTypeEncoding))
+		panic(fmt.Errorf("mailTypeEncoding %s is incorrect", mailTypeEncoding))
 	}
 	fmt.Printf("mailTypeEncoding: %s\n", mailTypeEncoding) // should be `Mail(Person from,Person to,string contents)Person(string name,address wallet)`
 
 	// encodeType
 	domainTypeEncoding := string(typedData.encodeType("EIP712Domain"))
 	if domainTypeEncoding != "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)" {
-		panic(fmt.Errorf("domainTypeEncoding %s is wrong", mailTypeEncoding))
+		panic(fmt.Errorf("domainTypeEncoding %s is incorrect", domainTypeEncoding))
 	}
 	fmt.Printf("domainTypeEncoding: %s\n", domainTypeEncoding)
 
 	// typeHash
-	mailTypeHash := fmt.Sprintf("0x%s", common.Bytes2Hex(typedData.typeHash("Mail")))
+	mailTypeHash := fmt.Sprintf("0x%s", common.Bytes2Hex(typedData.typeHash(typedData.PrimaryType)))
 	if mailTypeHash != "0xa0cedeb2dc280ba39b857546d74f5549c3a1d7bdc2dd96bf881f76108e23dac2" {
-		panic(fmt.Errorf("mailTypeHash %s is wrong", mailTypeHash))
+		panic(fmt.Errorf("mailTypeHash %s is incorrect", mailTypeHash))
 	}
 	fmt.Printf("mailTypeHash: %s\n", mailTypeHash)
 
 	// encodeData
 	dataEncoding := fmt.Sprintf("0x%s", common.Bytes2Hex(typedData.encodeData(typedData.PrimaryType, typedData.Message)))
 	if dataEncoding != "0xa0cedeb2dc280ba39b857546d74f5549c3a1d7bdc2dd96bf881f76108e23dac2fc71e5fa27ff56c350aa531bc129ebdf613b772b6604664f5d8dbe21b85eb0c8cd54f074a4af31b4411ff6a60c9719dbd559c221c8ac3492d9d872b041d703d1b5aadf3154a261abdd9086fc627b61efca26ae5702701d05cd2305f7c52a2fc8" {
-		panic(fmt.Errorf("dataEncoding %s is wrong", dataEncoding))
+		panic(fmt.Errorf("dataEncoding %s is incorrect", dataEncoding))
 	}
 	fmt.Printf("dataEncoding: %s\n", dataEncoding)
 
 	// hashStruct
 	mainHash := fmt.Sprintf("0x%s", common.Bytes2Hex(hashStruct(typedData.PrimaryType, typedData.Message)))
 	if mainHash != "0xc52c0ee5d84264471806290a3f2c4cecfc5490626bf912d01f240d7a274b371e" {
-		panic(fmt.Errorf("mainHash %s is wrong", mainHash))
+		panic(fmt.Errorf("mainHash %s is incorrect", mainHash))
 	}
 	fmt.Printf("mainHash: %s\n", mainHash)
 
 	// hashStruct
 	domainHash := fmt.Sprintf("0x%s", common.Bytes2Hex(hashStruct("EIP712Domain", typedData.Domain.Map())))
 	if domainHash != "0xf2cee375fa42b42143804025fc449deafd50cc031ca257e0b194a650a912090f" {
-		panic(fmt.Errorf("domainHash %s is wrong", domainHash))
+		panic(fmt.Errorf("domainHash %s is incorrect", domainHash))
 	}
 	fmt.Printf("domainHash: %s\n", domainHash)
 
 	// signature
-	sig := fmt.Sprintf("0x%s", common.Bytes2Hex(signHash()))
-	if sig != "0xbe609aee343fb3c4b28e1df9e632fca64fcfaede20f02e86244efddf30957bd2" {
-		panic(fmt.Errorf("signature %s is wrong", sig))
+	sigHash := fmt.Sprintf("0x%s", common.Bytes2Hex(signatureHash()))
+	if sigHash != "0xbe609aee343fb3c4b28e1df9e632fca64fcfaede20f02e86244efddf30957bd2" {
+		panic(fmt.Errorf("sigHash %s is incorrect", sigHash))
 	}
-	fmt.Printf("signature: %s\n", sig)
+	fmt.Printf("sigHash: %s\n", sigHash)
 }
 
-func signHash() []byte {
+func signatureHash() []byte {
 	buffer := bytes.Buffer{}
 	buffer.WriteString("\x19")
 	buffer.WriteString("\x01")

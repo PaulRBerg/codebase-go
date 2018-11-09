@@ -4,7 +4,8 @@ import (
 	"bytes"
 )
 
-// dependencies blah blah
+// dependencies returns an array of custom types ordered by their
+// hierarchical reference tree
 func (typedData *TypedData) dependencies(primaryType string, found []string) []string {
 	includes := func(arr []string, str string) bool {
 		for _, obj := range arr {

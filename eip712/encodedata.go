@@ -17,6 +17,23 @@ func (typedData *TypedData) typeHash(primaryType string) []byte {
 	return crypto.Keccak256(typedData.encodeType(primaryType))
 }
 
+func bytesValueOf(_interface interface{}) []byte {
+	bytesVal, ok := _interface.([]byte)
+	if ok {
+		return bytesVal
+	}
+
+	switch reflect.TypeOf(_interface) {
+	case reflect.TypeOf(string("")):
+		return []byte(_interface.(string))
+	default:
+		break
+	}
+
+	panic(fmt.Errorf("unrecognizer interface %v", _interface))
+	return []byte{}
+}
+
 // encodeData generates the following encoding:
 // `enc(value₁) ‖ enc(value₂) ‖ … ‖ enc(valueₙ)`
 //
@@ -41,11 +58,8 @@ func (typedData *TypedData) encodeData(primaryType string, data map[string]inter
 			for i := 0; i < 12; i++ {
 				bytesValue = append(bytesValue, 0)
 			}
-			for _, _byte := range encValue.(common.Address).Bytes() {
-				bytesValue = append(bytesValue, _byte)
-			}
+			bytesValue = append(bytesValue, encValue.(common.Address).Bytes()...)
 			primitiveEncValue = bytesValue
-			break
 		case "bool":
 			primitiveEncType = "uint256"
 			var int64Val int64
@@ -53,11 +67,9 @@ func (typedData *TypedData) encodeData(primaryType string, data map[string]inter
 				int64Val = 1
 			}
 			primitiveEncValue = abi.U256(big.NewInt(int64Val))
-			break
 		case "bytes", "string":
 			primitiveEncType = "bytes32"
 			primitiveEncValue = crypto.Keccak256(bytesValueOf(encValue))
-			break
 		default:
 			if strings.HasPrefix(encType, "bytes") {
 				encTypes = append(encTypes, "bytes32")
@@ -67,15 +79,12 @@ func (typedData *TypedData) encodeData(primaryType string, data map[string]inter
 				for i := 0; i < 32-size; i++ {
 					bytesValue = append(bytesValue, 0)
 				}
-				for _, _byte := range encValue.([]byte) {
-					bytesValue = append(bytesValue, _byte)
-				}
+				bytesValue = append(bytesValue, encValue.([]byte)...)
 				primitiveEncValue = bytesValue
 			} else if strings.HasPrefix(encType, "uint") || strings.HasPrefix(encType, "int") {
 				primitiveEncType = "uint256"
 				primitiveEncValue = abi.U256(encValue.(*big.Int))
 			}
-			break
 		}
 		return primitiveEncType, primitiveEncValue
 	}
@@ -116,22 +125,4 @@ func (typedData *TypedData) encodeData(primaryType string, data map[string]inter
 	}
 
 	return buffer.Bytes() // https://github.com/ethereumjs/ethereumjs-abi/blob/master/lib/index.js#L336
-}
-
-func bytesValueOf(_interface interface{}) []byte {
-	bytesVal, ok := _interface.([]byte)
-	if ok {
-		return bytesVal
-	}
-
-	switch reflect.TypeOf(_interface) {
-	case reflect.TypeOf(string("")):
-		return []byte(_interface.(string))
-		break
-	default:
-		break
-	}
-
-	panic(fmt.Errorf("unrecognizer interface %v", _interface))
-	return []byte{}
 }

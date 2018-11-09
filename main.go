@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/PaulRBerg/codebase-go/eip712"
 )
 
 func main() {
-	eip712.MainEncode712()
+	mainprinting()
+	//eip712.MainEncode712()
 }
 
 func ForLoops() {
