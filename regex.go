@@ -6,6 +6,10 @@ import (
 )
 
 func mainregex() {
+	TypeRegex()
+}
+
+func BasicRegex() {
 	fmt.Println("peach punch")
 	r, _ := regexp.Compile("p([a-z]+)ch")
 	fmt.Println(r.MatchString("peach"))
@@ -24,4 +28,15 @@ func mainregex() {
 	fmt.Println(rarrays.MatchString("SomeType[50]"))
 	fmt.Println(rnumbers.FindString("SomeType[50]"))
 	fmt.Println()
+}
+
+func TypeRegex() {
+	_ = []string{
+		"bytes",
+		"int",
+		"uint",
+	}
+	r, _ := regexp.Compile(`(bytes|int|uint)(\d+)\b`)
+	fmt.Println(r.MatchString("bytes256z"))
+	fmt.Println(r.FindString("bytes256z"))
 }

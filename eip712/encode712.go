@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/PaulRBerg/go-ethereum/common"
-	"github.com/PaulRBerg/go-ethereum/common/hexutil"
-	"github.com/PaulRBerg/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/ethereum/go-ethereum/crypto"
 )
 
 type TypedData struct {

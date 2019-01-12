@@ -4,7 +4,7 @@ import (
 	"encoding/hex"
 	"fmt"
 
-	"github.com/PaulRBerg/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/crypto"
 )
 
 func maincrypto() {

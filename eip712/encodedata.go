@@ -8,9 +8,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/PaulRBerg/go-ethereum/accounts/abi"
-	"github.com/PaulRBerg/go-ethereum/common"
-	"github.com/PaulRBerg/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/accounts/abi"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/crypto"
 )
 
 func (typedData *TypedData) typeHash(primaryType string) []byte {

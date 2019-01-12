@@ -3,7 +3,7 @@ package eip712
 import (
 	"math/big"
 
-	"github.com/PaulRBerg/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 const primaryType = "Mail"

@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/PaulRBerg/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 func maineth() {

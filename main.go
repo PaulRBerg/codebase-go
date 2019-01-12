@@ -1,12 +1,8 @@
 package main
 
-import (
-	"fmt"
-)
 
 func main() {
-	mainprinting()
-	//eip712.MainEncode712()
+	mainommers()
 }
 
 func ForLoops() {
