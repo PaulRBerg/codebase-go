@@ -5,7 +5,7 @@ import (
 )
 
 func mainommers() {
-	fmt.Println(k(4, 10, 6))
+	fmt.Println("k(4, 10, 6):", k(4, 11, 6))
 }
 
 func k(U uint, H uint, n uint8) bool {
@@ -15,17 +15,17 @@ func k(U uint, H uint, n uint8) bool {
 			if (s(U, H)) {
 				return true
 			} else {
-				H += 1 // this is the header of P(H)
+				H += 1 // the header of P(H)
 				return k(U, H, n - 1)
 			}
 	}
 }
 
-func s(U uint, H uint) {
+func s(U uint, H uint) bool {
 	// P(H) = P(U)
 	// H != U
 	// U is not in B(H) uncle list
 
 	// mock-up
-	return U % 4 == 0
+	return H % 10 == 0
 }
